@@ -1,0 +1,4 @@
+{
+    "command": "npm run test",
+    "working_directory": "/home/kavia/workspace/code-generation/study-notes-quiz-generator-209833-209843/quiz_frontend"
+}
