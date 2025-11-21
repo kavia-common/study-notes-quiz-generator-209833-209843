@@ -1,3 +1,4 @@
+import React from 'react';
 //
 // Lightweight API client for the quiz backend
 //
@@ -68,7 +69,15 @@ async function request(path, options = {}) {
 
 // PUBLIC_INTERFACE
 export async function postNotes(text, title = null) {
-  /** Submit raw study notes and optional title to generate a quiz. */
+  /**
+   * Submit raw study notes and optional title to generate a quiz.
+   * Backend: POST /notes
+   * Body: { notes: string, title?: string | null }
+   * Returns: QuizOut
+   */
+  if (!text || !text.trim()) {
+    throw new Error('Notes text is required');
+  }
   return request('/notes', {
     method: 'POST',
     body: JSON.stringify({ notes: text, title })
@@ -77,15 +86,49 @@ export async function postNotes(text, title = null) {
 
 // PUBLIC_INTERFACE
 export async function listQuizzes() {
-  /** Retrieve a list of quiz metadata. */
+  /**
+   * Retrieve a list of quiz metadata.
+   * Backend: GET /quizzes
+   * Returns: QuizMetaOut[]
+   */
   return request('/quizzes', { method: 'GET' });
 }
 
 // PUBLIC_INTERFACE
 export async function getQuiz(id) {
-  /** Retrieve a specific quiz by id. */
+  /**
+   * Retrieve a specific quiz by id.
+   * Backend: GET /quizzes/{quiz_id}
+   * Returns: QuizOut
+   */
   if (!id) {
     throw new Error('getQuiz requires an id');
   }
   return request(`/quizzes/${encodeURIComponent(id)}`, { method: 'GET' });
+}
+
+/**
+ * Convenience React hook for loading data with async function.
+ * Not exported as PUBLIC_INTERFACE to keep main surface minimal.
+ */
+export function useAsync(asyncFn, deps = []) {
+  const [state, setState] = React.useState({ loading: true, error: null, data: null });
+
+  React.useEffect(() => {
+    let cancelled = false;
+    setState({ loading: true, error: null, data: null });
+    asyncFn()
+      .then((data) => {
+        if (!cancelled) setState({ loading: false, error: null, data });
+      })
+      .catch((err) => {
+        if (!cancelled) setState({ loading: false, error: err, data: null });
+      });
+    return () => {
+      cancelled = true;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return state;
 }
