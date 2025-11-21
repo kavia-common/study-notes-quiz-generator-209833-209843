@@ -1,0 +1,32 @@
+.navbar {
+  width: 100%;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.navbar .navbar-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar .brand a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.navbar .links a {
+  color: var(--text-primary);
+  text-decoration: none;
+  margin-left: 16px;
+  font-weight: 600;
+}
+
+.navbar .links a:hover,
+.navbar .brand a:hover {
+  color: var(--text-secondary);
+}
